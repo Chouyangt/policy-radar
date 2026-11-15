@@ -1,9 +1,16 @@
 name: 政策雷达
 
-# 每小时抓两轮（GitHub 的定时有几分钟到十几分钟延迟，属正常）
+# 每小时 3 轮（错开整点，避开 GitHub 定时器的拥堵时段）
+# 注意：GitHub 的 schedule 不是精确闹钟，高峰会延迟 5–20 分钟，偶尔跳过；
+#      下一轮会自动补上，也可以在 Actions 页面点 Run workflow 立刻跑一次。
 on:
   schedule:
-    - cron: "7,37 * * * *"
+    - cron: "7,27,47 * * * *"
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/**"
+      - "holidays.json"
   workflow_dispatch:
 
 permissions:

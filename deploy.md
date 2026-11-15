@@ -19,7 +19,7 @@ git init
 git add .
 git commit -m "init"
 git branch -M main
-git remote add origin https://github.com/<你的用户名>/policy-radar.git
+git remote add origin https://github.com/Chouyangt/policy-radar.git
 git push -u origin main
 ```
 
@@ -32,8 +32,8 @@ git push -u origin main
 跑完后你的地址是：
 
 ```
-日历页   https://<用户名>.github.io/policy-radar/
-日历订阅 https://<用户名>.github.io/policy-radar/policies.ics
+日历页   https://chouyangt.github.io/policy-radar/
+日历订阅 https://chouyangt.github.io/policy-radar/policies.ics
 ```
 
 之后每小时自动跑两轮（cron `7,37 * * * *`），手机刷新就是最新的。
@@ -99,7 +99,7 @@ GitHub 的机器在境外，个别政务站可能对境外 IP 限流。判断方
     "telegram_token": "123456:ABC",
     "telegram_chat": "你的chat_id",
     "bark": "https://api.day.app/你的key",
-    "site_url": "https://<用户名>.github.io/policy-radar/"
+    "site_url": "https://chouyangt.github.io/policy-radar/"
   }
 }
 ```

@@ -127,7 +127,7 @@
 
 A 是最省事的：`.github/workflows/radar.yml` 已经写好，每小时跑两轮，
 跑完把 `out/` 发布到 GitHub Pages，手机打开
-`https://<用户名>.github.io/<仓库名>/` 就是最新日历，
+`https://chouyangt.github.io/policy-radar/` 就是最新日历，
 `.../policies.ics` 可以直接被 iPhone/Android 系统日历订阅。
 
 > GitHub 的机器在境外，个别政务站可能限流。跑完看 Actions 日志里每个源的成败，
@@ -139,7 +139,7 @@ A 是最省事的：`.github/workflows/radar.yml` 已经写好，每小时跑两
 { "notify": {
     "wecom": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx",
     "bark": "https://api.day.app/你的key",
-    "site_url": "https://<用户名>.github.io/<仓库名>/" } }
+    "site_url": "https://chouyangt.github.io/policy-radar/" } }
 ```
 
 支持企业微信 / 钉钉 / 飞书 / Telegram / Bark，配哪个发哪个。测通道：`python notify.py`。

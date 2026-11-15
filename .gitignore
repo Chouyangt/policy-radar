@@ -5,3 +5,6 @@ out/*.png
 data/*.db-journal
 data/*.db-wal
 data/*.db-shm
+
+_*.py
+
