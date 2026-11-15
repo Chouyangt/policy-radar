@@ -1,0 +1,58 @@
+name: 政策雷达
+
+# 每小时抓两轮（GitHub 的定时有几分钟到十几分钟延迟，属正常）
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: policy-radar
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 检查无头浏览器
+        run: |
+          for b in google-chrome chromium chromium-browser; do
+            if command -v $b >/dev/null 2>&1; then echo "found $b: $(command -v $b)"; exit 0; fi
+          done
+          echo "没找到浏览器，安装 chromium"
+          sudo apt-get update -qq && sudo apt-get install -y -qq chromium-browser || true
+
+      - name: 抓取 + 分析 + 生成日历
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: python radar.py sync
+
+      - name: 把数据库和节假日表存回仓库
+        run: |
+          git config user.name  "policy-radar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -f data/policies.db holidays.json
+          git diff --staged --quiet || git commit -m "chore: 更新政策库 $(date -u +'%Y-%m-%d %H:%M')"
+          git push || true
+
+      - name: 部署日历到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
+          keep_files: false
+          exclude_assets: "*.png"

@@ -1,0 +1,375 @@
+{
+  "_说明": "只收第一手发布主体：部委 / 省 / 深圳各局与各区官网。不含新闻媒体、不含转载聚合。",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "lookback_days": 90,
+  "max_items_per_source": 20,
+  "enrich_limit": 30,
+  "drop_classify": [
+    "政府采购",
+    "仲裁公告",
+    "工作动态",
+    "政务动态",
+    "新闻动态",
+    "财政预决算",
+    "三公经费",
+    "数据快递",
+    "数据解读",
+    "数据统计",
+    "统计分析",
+    "专项统计信息",
+    "政务服务",
+    "人事信息",
+    "便民提醒",
+    "路边停车",
+    "机构领导",
+    "政府信息公开指南",
+    "其他资金信息",
+    "信息公开规定",
+    "专题专栏",
+    "招标公告",
+    "中标公告",
+    "采购公告",
+    "街道动态",
+    "社区动态"
+  ],
+  "sources": [
+    {
+      "id": "gov_zuixin",
+      "name": "中国政府网 · 最新政策",
+      "group": "国家",
+      "adapter": "govcn_json",
+      "url": "https://www.gov.cn/zhengce/zuixin/ZUIXINZHENGCE.json",
+      "note": "国务院办公厅主办，中央/国务院文件统一发布口",
+      "enabled": true
+    },
+    {
+      "id": "mohrss_zcfg",
+      "name": "人社部 · 政策法规（社保）",
+      "group": "国家",
+      "adapter": "edge_list",
+      "url": "https://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/",
+      "allow_host": "mohrss\\.gov\\.cn",
+      "budget": 9000,
+      "note": "官网有 JS 挑战，用无头 Edge 渲染后取",
+      "enabled": true
+    },
+    {
+      "id": "mohurd_zcfb",
+      "name": "住建部 · 政策发布（房产）",
+      "group": "国家",
+      "adapter": "edge_list",
+      "url": "https://www.mohurd.gov.cn/zhengcefabu/index.html",
+      "allow_host": "mohurd\\.gov\\.cn",
+      "budget": 8000,
+      "note": "列表 JS 异步加载，用无头 Edge 渲染；该栏目混领导活动，按标题只留政策类",
+      "enabled": true,
+      "keep_title": "(通知|办法|规定|意见|方案|标准|公告|决定|细则|规划|条例|规章|征求意见|解读)"
+    },
+    {
+      "id": "nhsa_zcfg",
+      "name": "国家医保局 · 政策法规",
+      "group": "国家",
+      "adapter": "html_list",
+      "url": "https://www.nhsa.gov.cn/col/col104/index.html",
+      "note": "国家医疗保障局官网",
+      "enabled": true
+    },
+    {
+      "id": "nhsa_tzgg",
+      "name": "国家医保局 · 通知公告",
+      "group": "国家",
+      "adapter": "html_list",
+      "url": "https://www.nhsa.gov.cn/col/col109/index.html",
+      "enabled": true
+    },
+    {
+      "id": "mnr_tzgg",
+      "name": "自然资源部 · 通知公告（土地）",
+      "group": "国家",
+      "adapter": "html_list",
+      "url": "https://www.mnr.gov.cn/gk/tzgg/",
+      "note": "土地、国土空间规划、确权登记",
+      "enabled": true
+    },
+    {
+      "id": "gd_law",
+      "name": "广东省法规及规章",
+      "group": "广东",
+      "adapter": "gd_search",
+      "url": "https://search.gd.gov.cn/jsonp/site/755001",
+      "category_id": "2280",
+      "fglb": "广东省法规及规章",
+      "referer": "https://www.sz.gov.cn/cn/xxgk/zfxxgj/zcfg/gdsfg/index.html",
+      "enabled": true
+    },
+    {
+      "id": "sz_gov",
+      "name": "深圳市政府 · 政策文件",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755001",
+      "pagesize": 50,
+      "keep_classify": [
+        "市政府(办公厅)文件",
+        "规范性文件",
+        "规章",
+        "政策解读",
+        "重大行政决策事项目录",
+        "政府工作报告"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "sz_hrss",
+      "name": "深圳市人社局 · 社保/人才/补贴",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755011",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_zjj",
+      "name": "深圳市住建局 · 住房/房产",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755029",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_pnr",
+      "name": "深圳市规自局 · 土地/规划",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755016",
+      "pagesize": 50,
+      "note": "官网直连有 JS 反爬，走省统一接口",
+      "enabled": true
+    },
+    {
+      "id": "sz_hsa",
+      "name": "深圳市医保局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755012",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_amr",
+      "name": "深圳市市场监管局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755003",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_sf",
+      "name": "深圳市司法局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755017",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_stic",
+      "name": "深圳市科创局 · 科技计划",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755018",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_gxj",
+      "name": "深圳市工信局 · 产业扶持",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755010",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_fgw",
+      "name": "深圳市发改委",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755529",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_zxqyj",
+      "name": "深圳市中小企业服务局 · 专精特新",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755531",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_jr",
+      "name": "深圳市地方金融管理局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755031",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_jtys",
+      "name": "深圳市交通运输局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755032",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_gaj",
+      "name": "深圳市公安局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755530",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_szeb",
+      "name": "深圳市教育局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755020",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_wjw",
+      "name": "深圳市卫健委",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755025",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_commerce",
+      "name": "深圳市商务局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755006",
+      "pagesize": 50,
+      "enabled": true
+    },
+    {
+      "id": "sz_tax_zcwj",
+      "name": "深圳市税务局 · 政策文件",
+      "group": "深圳",
+      "adapter": "html_list",
+      "url": "https://shenzhen.chinatax.gov.cn/sztax/zcwj/zcwj.shtml",
+      "note": "税收政策一手发布",
+      "enabled": true
+    },
+    {
+      "id": "sz_tax_tzgg",
+      "name": "深圳市税务局 · 通知公告",
+      "group": "深圳",
+      "adapter": "html_list",
+      "url": "https://shenzhen.chinatax.gov.cn/sztax/xxgk/tzgg/common_list.shtml",
+      "enabled": true
+    },
+    {
+      "id": "sz_luohu",
+      "name": "罗湖区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755527",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_futian",
+      "name": "福田区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755039",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_nanshan",
+      "name": "南山区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755040",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_longgang",
+      "name": "龙岗区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755043",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_longhua",
+      "name": "龙华区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755044",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_guangming",
+      "name": "光明区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755046",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_pingshan",
+      "name": "坪山区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755041",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_yantian",
+      "name": "盐田区政府",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755042",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_dapeng",
+      "name": "大鹏新区",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755038",
+      "pagesize": 40,
+      "enabled": true
+    },
+    {
+      "id": "sz_qianhai",
+      "name": "前海管理局",
+      "group": "深圳",
+      "adapter": "gd_site",
+      "site_id": "755045",
+      "pagesize": 40,
+      "enabled": true
+    }
+  ]
+}
