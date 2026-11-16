@@ -45,6 +45,7 @@ jobs:
       - name: 抓取 + 分析 + 生成日历
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
         run: python radar.py sync
 
       - name: 把数据库和节假日表存回仓库

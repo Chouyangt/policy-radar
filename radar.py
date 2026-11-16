@@ -879,11 +879,16 @@ def sync(use_ai=True):
 
     print(f"\n本轮新增 {len(fresh)} 条，累计分析完成 {len(todo)} 条。")
 
-    # ── 推送（可选）：只推本轮新增里的重点，最多 10 条 ──
+    # ── 推送（可选）：只推本轮新增里的重点 ──
     if fresh and len(fresh) <= 300:
+        ncfg = user_config().get("notify") or {}
+        min_imp = int(ncfg.get("min_imp") or 4)
+        max_send = int(ncfg.get("max_items") or 10)
         rows = conn.execute(
-            "SELECT * FROM policies WHERE imp>=4 AND id IN (%s) "
-            "ORDER BY imp DESC, published DESC LIMIT 10" % ",".join("?" * len(fresh)), fresh
+            "SELECT * FROM policies WHERE imp>=? AND id IN (%s) "
+            "ORDER BY imp DESC, published DESC LIMIT ?"
+            % ",".join("?" * len(fresh)),
+            [min_imp, *fresh, max_send],
         ).fetchall()
         hot = [dict(r) for r in rows]
         if hot:
