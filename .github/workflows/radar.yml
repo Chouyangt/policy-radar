@@ -12,6 +12,11 @@ on:
       - "data/**"
       - "holidays.json"
   workflow_dispatch:
+    inputs:
+      test_push:
+        description: "顺带测一次推送（不管有没有新政策）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -46,7 +51,12 @@ jobs:
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
-        run: python radar.py sync
+        run: |
+          if [ "${{ inputs.test_push }}" = "true" ]; then
+            python radar.py sync --test-push
+          else
+            python radar.py sync
+          fi
 
       - name: 把数据库和节假日表存回仓库
         run: |

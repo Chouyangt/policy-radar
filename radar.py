@@ -732,7 +732,7 @@ def load_conf():
 # 5. 主流程
 # ══════════════════════════════════════════════════════════════
 
-def sync(use_ai=True):
+def sync(use_ai=True, test_push=False):
     global UA
     conf = load_conf()
     UA = conf.get("user_agent") or UA
@@ -906,6 +906,22 @@ def sync(use_ai=True):
     else:
         push_msg = "本轮无新增"
 
+    # ── 手动通道自检：不管有没有新增，都用库里最近的高分条目推一次 ──
+    if test_push:
+        rows = conn.execute(
+            "SELECT * FROM policies WHERE imp>=4 ORDER BY published DESC, imp DESC LIMIT 5"
+        ).fetchall()
+        hot = [dict(r) for r in rows]
+        if hot:
+            try:
+                import notify
+                push_msg = "[手动测试] " + notify.send(hot)
+            except Exception as e:
+                push_msg = f"[手动测试] 推送异常：{e}"
+            print(f"  · 手动测试推送：{push_msg}")
+        else:
+            push_msg = "[手动测试] 库里没有 ★4 以上的条目"
+
     render(conn, health, push_msg)
     conn.close()
     return len(fresh)
@@ -1072,6 +1088,8 @@ def main():
     ap.add_argument("cmd", nargs="?", default="sync",
                     choices=["sync", "render", "show"], help="默认 sync")
     ap.add_argument("--no-ai", action="store_true", help="不调用大模型，只用规则引擎")
+    ap.add_argument("--test-push", action="store_true",
+                    help="不管有没有新增，都用最近的高分条目推一次，用来验证推送通道")
     args = ap.parse_args()
 
     if args.cmd == "show":
@@ -1082,7 +1100,7 @@ def main():
         conn.close()
     else:
         t0 = time.time()
-        sync(use_ai=not args.no_ai)
+        sync(use_ai=not args.no_ai, test_push=args.test_push)
         print(f"耗时 {time.time() - t0:.1f}s\n")
 
 
