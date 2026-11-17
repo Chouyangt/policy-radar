@@ -176,25 +176,29 @@ def load_cfg() -> dict:
     return {}
 
 
-def send(items: list[dict], site_url: str = "") -> bool:
+def send(items: list[dict], site_url: str = "") -> str:
+    """返回一句人话状态，例如「飞书：ok」/「未配置推送」，会写进日历页脚。"""
     cfg = load_cfg()
     n = cfg.get("notify") or {}
-    if not n or not items:
-        return False
+    if not items:
+        return "本轮无可推送内容"
+    if not n:
+        return "未配置推送通道"
 
     max_items = int(n.get("max_items") or 10)
     items = sorted(items, key=lambda x: -(int(x.get("imp") or 3)))[:max_items]
     site = site_url or n.get("site_url", "")
     text = build_text(items, site)
-    sent = False
+    results: list[str] = []
 
     def try_send(name, fn):
-        nonlocal sent
         try:
             raw = fn()
-            print(f"    · {name}：{_ok(name, raw)}")
-            sent = True
+            status = _ok(name, raw)
+            results.append(f"{name}：{status}")
+            print(f"    · {name}：{status}")
         except Exception as e:
+            results.append(f"{name}：异常 {e}")
             print(f"    ! {name} 失败：{e}")
 
     if n.get("feishu"):
@@ -219,7 +223,7 @@ def send(items: list[dict], site_url: str = "") -> bool:
         base = n["bark"].rstrip("/")
         try_send("Bark", lambda: _get(f"{base}/{text[:300].replace(chr(10), ' ')}"))
 
-    return sent
+    return "；".join(results) if results else "无可用通道"
 
 
 # ══════════════════════════════════════════════════════════════
@@ -245,7 +249,8 @@ def main():
          "url": "https://www.gov.cn/", "summary": ""},
     ]
     print("发送测试消息…")
-    print("已发送" if send(demo, n.get("site_url", "")) else "没有可用的推送通道")
+    status = send(demo, n.get("site_url", ""))
+    print("状态：" + status)
 
 
 if __name__ == "__main__":

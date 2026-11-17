@@ -880,6 +880,7 @@ def sync(use_ai=True):
     print(f"\n本轮新增 {len(fresh)} 条，累计分析完成 {len(todo)} 条。")
 
     # ── 推送（可选）：只推本轮新增里的重点 ──
+    push_msg = ""
     if fresh and len(fresh) <= 300:
         ncfg = user_config().get("notify") or {}
         min_imp = int(ncfg.get("min_imp") or 4)
@@ -894,11 +895,18 @@ def sync(use_ai=True):
         if hot:
             try:
                 import notify
-                notify.send(hot)
+                push_msg = notify.send(hot)
             except Exception as e:
+                push_msg = f"推送异常：{e}"
                 print(f"  ! 推送失败：{e}")
+        else:
+            push_msg = f"本轮新增里没有 ★{min_imp} 以上的条目"
+    elif fresh:
+        push_msg = f"本轮新增 {len(fresh)} 条（首次导入，不推送）"
+    else:
+        push_msg = "本轮无新增"
 
-    render(conn, health)
+    render(conn, health, push_msg)
     conn.close()
     return len(fresh)
 
@@ -983,7 +991,7 @@ def ensure_holidays():
         print(f"  ! 节假日表生成失败：{e}")
 
 
-def render(conn, health=None):
+def render(conn, health=None, push_msg: str = ""):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     data = load_view(conn)
     tpl = TEMPLATE.read_text(encoding="utf-8")
@@ -998,6 +1006,7 @@ def render(conn, health=None):
         "sources": health,
         "month": today_str()[:7],
         "holidays": load_holidays(),
+        "push": push_msg,
     }
     html = (tpl.replace("/*__DATA__*/[]", js_safe(data))
                .replace("/*__META__*/{}", js_safe(meta))

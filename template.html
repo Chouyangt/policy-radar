@@ -153,6 +153,8 @@ select{padding:7px 10px;border:1px solid var(--line);border-radius:9px;backgroun
 .goto{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
   padding:9px 16px;border-radius:9px;font-size:13px;font-weight:500}
 .srcs{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--ink3);margin-top:18px}
+.srcs .pushinfo{margin-left:auto;color:var(--ink2);background:var(--panel);border:1px solid var(--line);
+  border-radius:6px;padding:1px 8px}
 .ok{color:#2f9e44}.bad{color:var(--hot)}
 @media(max-width:760px){
   .stat{min-width:64px;padding:6px 10px}
@@ -411,8 +413,9 @@ const META = /*__META__*/{};
   /* ---- health ---- */
   function health(){
     const list = META.sources||[];
+    const push = META.push ? `<span class="pushinfo">推送：${esc(META.push)}</span>` : '';
     $('#srchealth').innerHTML = '数据源巡检：' + list.map(s=>
-      `<span class="${s.ok?'ok':'bad'}">${s.ok?'●':'○'} ${esc(s.name)}${s.n?` (${s.n})`:''}</span>`).join(' ');
+      `<span class="${s.ok?'ok':'bad'}">${s.ok?'●':'○'} ${esc(s.name)}${s.n?` (${s.n})`:''}</span>`).join(' ') + push;
   }
 
   buildChips(); stats(); render(); health();
